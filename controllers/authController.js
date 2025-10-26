@@ -23,11 +23,14 @@ exports.login = (req, res) => {
     const {email, password}  = req.body;
 
     User.findByEmail(email, async (err, users) => {
+
         const user = users[0];
         const valid = await bcrypt.compare(password, user.password);
         if(!users.length || !valid)
             return res.status(400).send("Invalid email or password");
+
         const token = jwt.sign({id:user.id, email:user.email}, process.env.JWT_SECRET, {expiresIn: '1h'});
         res.json({token});
-    })
+    });
 }
+
