@@ -2,30 +2,29 @@ const nodemailer = require("nodemailer");
 
 const sendEmail = async (options) => {
 
-    let testAccount = await nodemailer.createTestAccount();
+    try{
 
-    const transporter = nodemailer.createTransport({
-        host: 'smtp.ethereal.email',
-        port: 587,
-        secure: testAccount.secure,
-        auth: {
-            user: testAccount.user,
-            pass: testAccount.pass,
-        },
-    });
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS,
+            },
+        });
 
-    //sending mail
-    const mailOPtions = {
-        from: '"Card system" <no-replykebebhclovis.com>',
-        to: options.to,
-        subject: options.subject,
-        html: options.html,
-    };
 
-    const info = await transporter.sendMail(mailOPtions);
-
-    console.log("Email sent: %s", info.messageId);
-    console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+        const mailOPtions = {
+            from: `"Card system" <${process.env.EMAIL_USER}>`,
+            to: options.to,
+            subject: options.subject,
+            html: options.html,
+        };
+        const info = await transporter.sendMail(mailOPtions);
+        console.log("Email sent: %s", info.messageId);
+    }catch(error){
+        console.error("Error sending email:", error);
+        throw new Error("Email sending failed");
+    }
 };
 
 module.exports = sendEmail;

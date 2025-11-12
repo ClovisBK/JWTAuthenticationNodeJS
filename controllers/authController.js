@@ -58,7 +58,7 @@ exports.forgotPassword = async (req, res) => {
                 return res.status(200).json({message: "If an account exists, a reset link has been sent to you"});
             }
 
-            const generateToken = crypto.randomBytes(32).toString('hex');
+            const resetToken = crypto.randomBytes(32).toString('hex');
             const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
             const expiry = new Date(Date.now() + 3600000);
             

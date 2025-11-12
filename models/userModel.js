@@ -21,7 +21,7 @@ exports.setResetToken = (email, hashedToken, expiry, callback) => {
 
 exports.findByResetToken = (hashedToken, callback) =>{
     app.query(
-        'SELECT * FROM user WHERE reset_password_token = ? AND reset_password_expires  = NULL WHERE email = ?',
+        'SELECT * FROM user WHERE reset_password_token = ? AND reset_password_expires  > NOW()',
         [hashedToken],
         callback
     );
