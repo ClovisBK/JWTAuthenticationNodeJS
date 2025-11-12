@@ -10,3 +10,28 @@ exports.createUser = (data, callback) => {
 exports.findByEmail = (email, callback) => {
     app.query('SELECT * FROM user WHERE email = ?', [email], callback);
 }
+
+exports.setResetToken = (email, hashedToken, expiry, callback) => {
+    app.query(
+        'UPDATE user SET reset_password_token = ?, reset_password_expires = ? WHERE email = ?',
+        [hashedToken, expiry, email],
+        callback
+    );
+};
+
+exports.findByResetToken = (hashedToken, callback) =>{
+    app.query(
+        'SELECT * FROM user WHERE reset_password_token = ? AND reset_password_expires  = NULL WHERE email = ?',
+        [hashedToken],
+        callback
+    );
+};
+
+
+exports.updatePassword = (email, hashedPassword, callback) => {
+    app.query(
+        'UPDATE user SET password = ?, reset_password_token = NULL, reset_password_expires = NULL WHERE email = ?',
+        [hashedPassword, email],
+        callback
+    );
+};
