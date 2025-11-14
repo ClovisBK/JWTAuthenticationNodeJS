@@ -65,7 +65,7 @@ exports.forgotPassword = async (req, res) => {
             User.setResetToken(email, hashedToken, expiry, async (err) => {
                 if(err) return res.status(500).json({message: "Failed to set reset token"});
                 
-                const resetURL = `http://localhost:5173/reset-password?token=${resetToken}&email=${email}`;
+                const resetURL = `https://binvirtualcard.netlify.app/reset-password?token=${resetToken}&email=${email}`;
                 const message = `
                     <h3>Password Reset Request </h3>
                     <p>You requested to reset your password. Click the link below to reset it:</p>

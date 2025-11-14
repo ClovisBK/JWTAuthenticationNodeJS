@@ -8,7 +8,7 @@ const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 
 app.use(cors({
-    origin: 'http://localhost:5175', 
+    origin: 'https://binvirtualcard.netlify.app/', 
     credentials: true
 }));
 
