@@ -8,7 +8,7 @@ const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 
 app.use(cors({
-    origin: 'https://binvirtualcard.netlify.app', 
+    origin: 'https://kebehcard.vercel.app', 
     credentials: true
 }));
 
