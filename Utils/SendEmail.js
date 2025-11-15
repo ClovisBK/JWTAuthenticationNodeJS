@@ -5,7 +5,7 @@ const sendEmail = async (options) => {
 
     try{
 
-        const data = resend.emails.send({
+        const data = await resend.emails.send({
            from: `"Card system" <noreply@kebehcard.vercel.app>`,
             to: options.to,
             subject: options.subject,
@@ -21,3 +21,6 @@ const sendEmail = async (options) => {
 };
 
 module.exports = sendEmail;
+
+
+// re_CCVJnjjZ_EBF9MAywpbZ8gnAjzs6hUPxs
