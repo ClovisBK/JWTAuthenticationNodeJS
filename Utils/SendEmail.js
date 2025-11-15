@@ -1,26 +1,19 @@
-const nodemailer = require("nodemailer");
+const {Resend} = require("resend");
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendEmail = async (options) => {
 
     try{
 
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS,
-            },
-        });
-
-
-        const mailOPtions = {
-            from: `"Card system" <${process.env.EMAIL_USER}>`,
+        const data = resend.emails.send({
+           from: `"Card system" <noreply@kebehcard.vercel.app>`,
             to: options.to,
             subject: options.subject,
             html: options.html,
-        };
-        const info = await transporter.sendMail(mailOPtions);
-        console.log("Email sent: %s", info.messageId);
+        });
+
+
+        console.log("Email sent:", data);
     }catch(error){
         console.error("Error sending email:", error);
         throw new Error("Email sending failed");
