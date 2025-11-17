@@ -1,37 +1,22 @@
-const axios = require("axios");
+const {Resend} = require("resend");
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendEmail = async ({to, subject, html}) => {
 
     try{
 
-        const response = await axios.post(
-            "https://api.brevo.com/v3/smtp/email",
+        const response = await resend.emails.send({
 
-            {
-           sender:{
-                email: process.env.BREVO_SENDER_EMAIL,
-                name: process.env.BREVO_SENDER_NAME || kebehcard,
-           },
-
-            to: [{email: to}],
+            from: "kebehCard <onboarding@resend.dev>",
+            to,
             subject,
-            htmlContent: html,
-             },
-             {
-                headers: {
-                    "api-key": process.env.BREVO_API_KEY,
-                    "content-type": "application/json",
-                },
-             }
+            html
+        }      
     );
-
-
-        console.log("Brevo email sent:", response.data);
+        console.log("Resend email sent:", response);
     }catch(error){
-        console.error(
-            "Brevo email error:",
-            error.response?.data || error.message || error
-        );
+        console.error("Resend email error:", error);
         throw new Error("Email sending failed");
     }
 };
@@ -39,4 +24,3 @@ const sendEmail = async ({to, subject, html}) => {
 module.exports = sendEmail;
 
 
-// re_CCVJnjjZ_EBF9MAywpbZ8gnAjzs6hUPxs
