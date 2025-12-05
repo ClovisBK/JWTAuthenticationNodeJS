@@ -17,7 +17,7 @@ exports.register = async (req, res) => {
             if(err)
                 return res.status(500).send(err);
 
-            const token = jwt.sign({id: newUser.id, email: email}, process.env.JWT_SECRET, {expiresIn: '1h'});
+            const token = jwt.sign({id: newUser.id, email: email, role: "user"}, process.env.JWT_SECRET, {expiresIn: '1h'});
             res.status(201).json({
                 message: "Registration successful",
                 token
@@ -37,7 +37,7 @@ exports.login = (req, res) => {
         if(!users.length || !valid)
             return res.status(400).send("Invalid email and Password Combination");
 
-        const token = jwt.sign({id:user.id, email:user.email}, process.env.JWT_SECRET, {expiresIn: '1h'});
+        const token = jwt.sign({id:user.id, email:user.email, role: user.role}, process.env.JWT_SECRET, {expiresIn: '1h'});
         res.json({token});
     });
 }
