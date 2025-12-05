@@ -8,7 +8,8 @@ exports.createUser = (data, callback) => {
 };
 
 exports.findByEmail = (email, callback) => {
-    app.query('SELECT * FROM user WHERE email = ?', [email], callback);
+    const sql = 'SELECT * FROM user WHERE email = ?';
+    app.query(sql, [email], callback);
 }
 
 exports.updateUserRole = (email, role, callback) => {
