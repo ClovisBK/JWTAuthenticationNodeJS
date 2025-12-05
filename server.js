@@ -3,6 +3,7 @@ const authMiddleware = require('./middleware/middleware');
 const app = express();
 const cors = require('cors');
 require('dotenv').config();
+const bcrypt = require("bcrypt");
 
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
@@ -19,4 +20,5 @@ app.use('/V1/api/users', authMiddleware, userRoutes);
 const PORT = process.env.PORT || 3000; 
 app.listen(PORT, () =>{
     console.log(`Server is running on port ${PORT}`);
+    bcrypt.hash("password!23", 10).then(console.log);
 });

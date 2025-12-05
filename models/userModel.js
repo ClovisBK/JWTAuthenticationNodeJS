@@ -11,6 +11,10 @@ exports.findByEmail = (email, callback) => {
     app.query('SELECT * FROM user WHERE email = ?', [email], callback);
 }
 
+exports.updateUserRole = (email, role, callback) => {
+    app.query('UPDATE user SET role = ? WHERE email = ?', [role, email], callback);
+};
+
 exports.setResetToken = (email, hashedToken, expiry, callback) => {
     app.query(
         'UPDATE user SET reset_password_token = ?, reset_password_expires = ? WHERE email = ?',
