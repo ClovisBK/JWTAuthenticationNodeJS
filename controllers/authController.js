@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-const User = require('../models/userModel');
+const Users = require('../models/userModel');
 const sendEmail = require("../Utils/SendEmail");
 
 
@@ -10,10 +10,10 @@ exports.register = async (req, res) => {
     const {firstName, lastName, email, password, phoneNumber, address, dateOfBirth} = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    User.findByEmail(email, (err, users) => {
+    Users.findByEmail(email, (err, users) => {
         if(users.length)
             return res.status(400).send("User with this email already exists");
-        User.createUser({firstName, lastName, email, password:hashedPassword, phoneNumber, address, dateOfBirth}, (err, newUser) => {
+        Users.createUser({firstName, lastName, email, password:hashedPassword, phoneNumber, address, dateOfBirth}, (err, newUser) => {
             if(err)
                 return res.status(500).send(err);
 
@@ -29,7 +29,7 @@ exports.register = async (req, res) => {
 exports.login = (req, res) => {
     const {email, password}  = req.body;
 
-    User.findByEmail(email, async (err, users) => {
+    Users.findByEmail(email, async (err, users) => {
 
         const user = users[0];
         const valid = await bcrypt.compare(password, user.password);
@@ -49,7 +49,7 @@ exports.forgotPassword = async (req, res) => {
     }
 
     try{
-        User.findByEmail(email, async (err, users) => {
+        Users.findByEmail(email, async (err, users) => {
             if(err) return res.status(500).json({message: "Database error"});
 
             const user = users[0];
@@ -61,7 +61,7 @@ exports.forgotPassword = async (req, res) => {
             const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
             const expiry = new Date(Date.now() + 3600000);
             
-            User.setResetToken(email, hashedToken, expiry, async (err) => {
+            Users.setResetToken(email, hashedToken, expiry, async (err) => {
                 if(err) return res.status(500).json({message: "Failed to set reset token"});
                 
                 const resetURL = `https://kebehcard.vercel.app/reset-password?token=${resetToken}&email=${email}`;
@@ -102,7 +102,7 @@ exports.resetPassword = async (req, res) => {
     try{
         const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
 
-        User.findByResetToken(hashedToken, async (err, users) => {
+        Users.findByResetToken(hashedToken, async (err, users) => {
             if(err) return res.status(500).json({message: "Database error"});
 
             const user = users[0];
@@ -112,7 +112,7 @@ exports.resetPassword = async (req, res) => {
 
             const hashedPassword = await bcrypt.hash(password, 10);
 
-            User.updatePassword(user.email, hashedPassword, (err2) => {
+            Users.updatePassword(user.email, hashedPassword, (err2) => {
                 if(err2) return res.status(500).json({message: "Failed to update password"});
 
                 res.status(200).json({message: "Password reset successful"});

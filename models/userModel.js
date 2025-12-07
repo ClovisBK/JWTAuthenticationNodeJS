@@ -1,24 +1,33 @@
+
 const app = require("../config/app");
 
 exports.getAllUsers = (callback) => {
-    app.query('SELECT * FROM user', callback);
+    app.query('SELECT * FROM users', callback);
 };
 exports.createUser = (data, callback) => {
-    app.query('INSERT INTO user SET ?', data, callback);
+    app.query('INSERT INTO users SET ?', data, callback);
 };
 
 exports.findByEmail = (email, callback) => {
-    const sql = 'SELECT * FROM user WHERE email = ?';
+    const sql = 'SELECT * FROM users WHERE email = ?';
     app.query(sql, [email], callback);
 }
 
 exports.updateUserRole = (email, role, callback) => {
-    app.query('UPDATE user SET role = ? WHERE email = ?', [role, email], callback);
+    app.query('UPDATE users SET role = ? WHERE email = ?', [role, email], callback);
+};
+
+exports.linkPharmacyToUser = (userId, pharmacyId, callback) =>{
+    app.query("UPDATE users SET pharmacy_id = ? WHERE id = ?", [pharmacyId, userId], callback);
+}
+exports.getUserPharmacy = (userId, callback) =>{
+    app.query("SELECT pharmacy_id FROM users WHERE id = ?", [userId], callback);
+    
 };
 
 exports.setResetToken = (email, hashedToken, expiry, callback) => {
     app.query(
-        'UPDATE user SET reset_password_token = ?, reset_password_expires = ? WHERE email = ?',
+        'UPDATE users SET reset_password_token = ?, reset_password_expires = ? WHERE email = ?',
         [hashedToken, expiry, email],
         callback
     );
@@ -26,7 +35,7 @@ exports.setResetToken = (email, hashedToken, expiry, callback) => {
 
 exports.findByResetToken = (hashedToken, callback) =>{
     app.query(
-        'SELECT * FROM user WHERE reset_password_token = ? AND reset_password_expires  > NOW()',
+        'SELECT * FROM users WHERE reset_password_token = ? AND reset_password_expires  > NOW()',
         [hashedToken],
         callback
     );
@@ -35,7 +44,7 @@ exports.findByResetToken = (hashedToken, callback) =>{
 
 exports.updatePassword = (email, hashedPassword, callback) => {
     app.query(
-        'UPDATE user SET password = ?, reset_password_token = NULL, reset_password_expires = NULL WHERE email = ?',
+        'UPDATE users SET password = ?, reset_password_token = NULL, reset_password_expires = NULL WHERE email = ?',
         [hashedPassword, email],
         callback
     );
