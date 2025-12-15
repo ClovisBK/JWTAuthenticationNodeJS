@@ -29,15 +29,33 @@ exports.register = async (req, res) => {
 exports.login = (req, res) => {
     const {email, password}  = req.body;
 
+    if(!email || !password)
+        return res.status(400).json({message: "Email and password are required"})
+
     Users.findByEmail(email, async (err, users) => {
+        if(err){
+            console.error("Database error in login:", err);
+            return res.status(500).json({message: "Database error"});
+        }
+
+        if(!users || users.length === 0){
+            return res.status(401).json({message: "Invalid email or password"});
+        }
 
         const user = users[0];
-        const valid = await bcrypt.compare(password, user.password);
-        if(!users.length || !valid)
-            return res.status(400).send("Invalid email and Password Combination");
 
-        const token = jwt.sign({id:user.id, email:user.email, role: user.role}, process.env.JWT_SECRET, {expiresIn: '1h'});
-        res.json({token});
+        try{
+
+            const valid = await bcrypt.compare(password, user.password);
+            if(!users.length || !valid)
+                return res.status(400).send("Invalid email and Password Combination");
+    
+            const token = jwt.sign({id:user.id, email:user.email, role: user.role}, process.env.JWT_SECRET, {expiresIn: '1h'});
+            res.json({token});
+        }catch(bcryptError){
+            console.error('Bcrypt error', bcryptError)
+            res.status(500).json({message: "Authentication error"});
+        }
     });
 }
 
@@ -64,7 +82,7 @@ exports.forgotPassword = async (req, res) => {
             Users.setResetToken(email, hashedToken, expiry, async (err) => {
                 if(err) return res.status(500).json({message: "Failed to set reset token"});
                 
-                const resetURL = `https://kebehcard.vercel.app/reset-password?token=${resetToken}&email=${email}`;
+                const resetURL = `http://localhost:5175/reset-password?token=${resetToken}&email=${email}`;
                 const message = `
                     <h3>Password Reset Request </h3>
                     <p>You requested to reset your password. Click the link below to reset it:</p>

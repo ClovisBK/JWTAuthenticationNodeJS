@@ -10,7 +10,13 @@ exports.createUser = (data, callback) => {
 
 exports.findByEmail = (email, callback) => {
     const sql = 'SELECT * FROM users WHERE email = ?';
-    app.query(sql, [email], callback);
+    app.query(sql, [email], (error, results) => {
+        if(error){
+            console.error("Database error in searching email:", error);
+            return callback(error, null);
+        }
+        callback(null, results || []);
+    });
 }
 
 exports.updateUserRole = (email, role, callback) => {
@@ -24,6 +30,9 @@ exports.getUserPharmacy = (userId, callback) =>{
     app.query("SELECT pharmacy_id FROM users WHERE id = ?", [userId], callback);
     
 };
+exports.getPharmacyByUser = (userId, callback) =>{
+    app.query("SELECT pharmacy_id FROM users WHERE id = ?", [userId], callback);
+}
 
 exports.setResetToken = (email, hashedToken, expiry, callback) => {
     app.query(

@@ -19,7 +19,7 @@ const sendEmail = async ({to, subject, html}) => {
             subject,
             html,
         });
-        console.log("Resend email sent:", info.messageId);
+        console.log("Reset email sent:", info.messageId);
     }catch(error){
         console.error("Resend email error:", error);
         throw new Error("Email sending failed");

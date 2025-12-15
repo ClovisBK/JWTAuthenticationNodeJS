@@ -10,9 +10,12 @@ const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const pharmacyRoutes = require('./routes/pharmacyRoutes');
+const drugRoutes = require('./routes/drugRoutes');
 
 app.use(cors({
-    origin: 'https://kebehcard.vercel.app', 
+    // origin: 'https://kebehcard.vercel.app', 
+    origin: 'http://localhost:5175',
+    allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
 }));
 
@@ -21,6 +24,8 @@ app.use('/V1/api/auth', authRoutes);
 app.use('/V1/api/users', verifyToken, userRoutes);
 app.use('/V1/api/admin',verifyToken, authorizeRole("admin"), adminRoutes);
 app.use('/V1/api/pharmacy', verifyToken, authorizeRole("pharmacy"), pharmacyRoutes);
+app.use('/V1/api/drug', verifyToken, authorizeRole("pharmacy"), drugRoutes);
+app.use('/V1/api/drugs', verifyToken, authorizeRole('pharmacy'), drugRoutes);
 
 
 const PORT = process.env.PORT || 3000; 
